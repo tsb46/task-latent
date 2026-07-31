@@ -1,0 +1,19 @@
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+# ignore macOS system files
+.DS_Store
+
+# Virtual environments
+.venv
+
+# scratch python scripts
+scratch.py
+
+# ignore data directory
+data/
