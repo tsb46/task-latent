@@ -772,7 +772,7 @@ dependencies = [
 [package.metadata]
 requires-dist = [
     { name = "nilearn", specifier = ">=0.14.0" },
-    { name = "numpy", specifier = "==2.4.6" },
+    { name = "numpy", specifier = "<2.5" },
     { name = "pybids", specifier = ">=0.22.0" },
 ]
 
