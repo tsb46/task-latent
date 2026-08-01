@@ -11,6 +11,7 @@ requires-python = ">=3.12"
 dependencies = [
     "nilearn>=0.14.0",
     "pybids>=0.22.0",
+    "numpy==2.4.6"
 ]
 
 [tool.setuptools.packages.find]
