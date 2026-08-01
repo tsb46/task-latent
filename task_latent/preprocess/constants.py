@@ -8,7 +8,5 @@ HIGHPASS = 0.01
 # Full width at half maximum for Gaussian smoothing
 FWHM = 4
 
-# 3mm brain mask for IBC dataset
-# copied from:
-# https://github.com/individual-brain-charting/public_analysis_code/tree/master/ibc_data
-MASK = "templates/gm_mask_3mm.nii.gz"
+# 3mm brain mask for IBC dataset in MNI152 space
+MASK = "templates/MNI152_3mm_brain_mask_ibc.nii.gz"

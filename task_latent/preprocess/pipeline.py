@@ -251,7 +251,7 @@ def func_volume_pipeline(
 
     # Apply spatial smoothing
     if float(fwhm) > 0:
-        func_img_proc = _func_smooth(func_img_proc, fwhm=float(fwhm))
+        func_img_proc = smooth_img(func_img_proc, fwhm=fwhm)
 
     # Mask out smoothed data to ensure non-brain voxels are zero
     func_data_masked = apply_mask(func_img_proc, mask_img)
@@ -293,27 +293,6 @@ def _process_single_fmri(
             f"Expected NIfTI image for volume output, got {type(fmri_proc)}"
         )
     nib.save(fmri_proc, output_path)
-
-
-def _func_smooth(func_img: nib.Nifti1Image, fwhm: float) -> nib.Nifti1Image:
-    """
-    Apply smoothing to functional MRI data.
-
-    Parameters
-    ----------
-    func_img : nib.Nifti1Image
-        The functional MRI data.
-    fwhm : float
-        The full width at half maximum (FWHM) for the Gaussian smoothing kernel.
-
-    Returns
-    -------
-    nib.Nifti1Image
-        The smoothed functional MRI data.
-    """
-    # Apply smoothing (e.g., using a Gaussian filter)
-    smoothed_img = smooth_img(func_img, fwhm=fwhm)
-    return smoothed_img
 
 
 def _make_desc_preprocfinal_name(name: str) -> str:
