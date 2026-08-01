@@ -46,6 +46,7 @@ class FileMapper:
             self.layout = BIDSLayout(
                 IBC_DATA_DIR,
                 indexer=indexer,
+                is_derivative=True,
             )
         else:
             raise ValueError("Dataset must be 'ibc' for FileMapper.")
@@ -311,7 +312,6 @@ class FileMapper:
         list of str
             A list of fMRI file paths.
         """
-
         bids_files = self.layout.get(
             subject=self.subject,
             session=session,
@@ -320,7 +320,6 @@ class FileMapper:
             extension=extension,
             run=run,
             desc=desc,
-            echo=None,
         )
 
         filenames = [f.path for f in bids_files]
