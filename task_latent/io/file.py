@@ -256,8 +256,12 @@ class FileMapper:
         return sessions
 
     def get_session_event_files(
-        self, session: str, task: str, run: str | None = None
-    ) -> list[tuple[str, str]]:
+        self,
+        session: str,
+        task: str,
+        run: str | None = None,
+        ped: Literal["ap", "pa"] | None = None,
+    ) -> list[str]:
         """
         Get the event files for a specific session and task.
 
@@ -269,21 +273,37 @@ class FileMapper:
             The task identifier.
         run : str, optional
             The run identifier. If provided, only files for this run will be returned.
+        ped : Literal['ap', 'pa'] | None, optional
+            The phase encoding direction. If provided, only files for this phase encoding direction will be returned
 
         Returns
         -------
-        list of tuple of str
-            A list of onset and duration file path tuples (onset, duration) - for Euskalibur.
+        list of str
+            List of event file paths.
         """
-        raise NotImplementedError(
-            f"Event file retrieval not implemented for {self.dataset} dataset."
+        bids_files = self.layout.get(
+            subject=self.subject,
+            session=session,
+            task=task,
+            suffix="events",
+            extension=".tsv",
+            run=run,
         )
+        filenames = [f.path for f in bids_files]
+
+        # for some reason, filtering by PhaseEncodingDirection entity does not work for some files
+        # so we will filter manually after retrieving the files
+        if ped is not None:
+            filenames = [f for f in filenames if f"dir-{ped}" in f]
+
+        return filenames
 
     def get_session_fmri_files(
         self,
         session: str,
         task: str,
         run: str | None = None,
+        ped: Literal["ap", "pa"] | None = None,
         desc: Literal["preproc", "preprocfinal"] | None = "preproc",
         extension: str = ".nii.gz",
     ) -> list[str]:
@@ -298,6 +318,8 @@ class FileMapper:
             The task identifier.
         run : str, optional
             The run identifier. If provided, only files for this run will be returned.
+        ped : Literal['ap', 'pa'] | None, optional
+            The phase encoding direction. If provided, only files for this phase encoding direction will be returned.
         desc : Literal['preproc', 'preprocfinal'] | None, optional
             The description entity to filter files. Defaults to 'preproc' for
             the output of fMRIPrep preprocessing. Use 'preprocfinal' for
@@ -324,10 +346,19 @@ class FileMapper:
 
         filenames = [f.path for f in bids_files]
 
+        # for some reason, filtering by PhaseEncodingDirection entity does not work for some files
+        # so we will filter manually after retrieving the files
+        if ped is not None:
+            filenames = [f for f in filenames if f"dir-{ped}" in f]
+
         return filenames
 
     def get_session_confound_files(
-        self, session: str, task: str, run: str | None = None
+        self,
+        session: str,
+        task: str,
+        run: str | None = None,
+        ped: Literal["ap", "pa"] | None = None,
     ) -> list[str]:
         """
         Get the confound time series fMRIPrep output file paths for a specific session and task.
@@ -340,6 +371,8 @@ class FileMapper:
             The task identifier.
         run : str, optional
             The run identifier. If provided, only files for this run will be returned.
+        ped : Literal['ap', 'pa'] | None, optional
+            The phase encoding direction. If provided, only files for this phase encoding direction will be returned
 
         Returns
         -------
@@ -356,51 +389,13 @@ class FileMapper:
             run=run,
         )
         filenames = [f.path for f in bids_files]
+
+        # for some reason, filtering by PhaseEncodingDirection entity does not work for some files
+        # so we will filter manually after retrieving the files
+        if ped is not None:
+            filenames = [f for f in filenames if f"dir-{ped}" in f]
+
         return filenames
-
-    def get_subject_mask(
-        self,
-        task: str | None = None,
-        session: str | None = None,
-        run: str | None = None,
-    ) -> str:
-        """
-        Get the subject functional mask file path by run, session and task.
-
-        Parameters
-        ----------
-        task : str, optional
-            The task identifier.
-        session : str, optional
-            The session identifier.
-        run : str, optional
-            The run identifier.
-
-
-        Returns
-        -------
-        str
-            The file path to the subject's functional brain mask.
-        """
-        bids_files = self.layout.get(
-            subject=self.subject,
-            session=session,
-            task=task,
-            run=run,
-            space=None,
-            suffix="mask",
-            extension=".nii.gz",
-        )
-
-        if not bids_files:
-            raise RuntimeError(
-                f"No brain mask file found for subject '{self.subject}' in dataset."
-            )
-        if len(bids_files) > 1:
-            raise RuntimeError(
-                f"Multiple brain mask files found for subject '{self.subject}' in dataset. Expected only one mask file per subject."
-            )
-        return bids_files[0].path  # assuming there is only one mask file per subject
 
     def get_tr(self, task: str) -> float:
         """
