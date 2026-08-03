@@ -5,7 +5,7 @@ Steps:
 
 1) Detrending
 2) High-pass filtering (> 0.01 Hz)
-3) Standardize signal (psc)
+3) Standardize signal (z-score)
 4) Smoothing
 """
 
@@ -18,13 +18,14 @@ from joblib import Parallel, delayed
 from nilearn.image import clean_img, smooth_img
 from nilearn.masking import apply_mask, unmask
 
+# File path to mask
+from task_latent.constants import MASK
 from task_latent.io.file import FileMapper
 
 # Preprocessing parameters
 from task_latent.preprocess.constants import (
     FWHM,  # smoothing FWHM
     HIGHPASS,  # high-pass filter cutoff frequency
-    MASK,  # 3mm brain mask
 )
 
 
@@ -48,6 +49,16 @@ class PreprocessingPipeline:
             dataset (Literal['ibc']): The dataset identifier.
             subject (str): The subject identifier.
         """
+        # ensure dataset is 'ibc'
+        if dataset != "ibc":
+            raise ValueError(
+                f"Dataset '{dataset}' is not supported for PreprocessingPipeline."
+            )
+        # ensure subject is passed
+        if not subject:
+            raise ValueError(
+                "Subject label must be provided for PreprocessingPipeline."
+            )
         self.subject = subject
         self.dataset = dataset
 
