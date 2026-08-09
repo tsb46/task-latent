@@ -13,8 +13,9 @@ wheels/
 .venv
 env/
 
-# scratch python scripts
+# scratch directory and python script
 scratch.py
+scratch/
 
 # ignore data directory
 data/

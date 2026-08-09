@@ -66,14 +66,8 @@ class FileMapper:
         self.sessions = self.layout.get_sessions(subject=self.subject)
         # get the tasks for the subject
         self.tasks = self.layout.get_tasks(subject=self.subject)
-        # loop through sessions and get runs for each task
-        self.tasks_runs = {}
-        for task in self.tasks:
-            self.tasks_runs[task] = {}
-            for session in self.sessions:
-                self.tasks_runs[task][session] = self.layout.get_runs(
-                    subject=self.subject, session=session, task=task
-                )
+        # create a nested dictionary to store iterations over tasks, sessions, and runs
+        self._create_task_session_run_iter()
 
     def refresh_layout(self) -> None:
         """Rebuild the BIDS layout so newly created files can be discovered."""
@@ -86,7 +80,8 @@ class FileMapper:
         preproc_type: Literal["orig", "final"] = "orig",
     ) -> list[str]:
         """
-        Get the fMRI files from all sessions for a specific task.
+        Get the fMRI files from all sessions for a specific task. All fMRI files for the specified task
+        and sessions will be returned, including all runs and phase encoding directions.
 
         Parameters
         ----------
@@ -122,36 +117,25 @@ class FileMapper:
 
         fmri_files = []
         for session in sessions if sessions is not None else self.sessions:
-            # check for multiple runs
-            runs = self.tasks_runs[task][session]
-            # if multiple runs, loop through and get files for each run
-            if len(runs) > 1:
-                for run in runs:
-                    files = self.get_session_fmri_files(
-                        session,
-                        task,
-                        run=run,
-                        desc=desc,
-                        extension=extension,
-                    )
-                    fmri_files.extend(files)
-            else:
-                files = self.get_session_fmri_files(
-                    session, task, desc=desc, extension=extension
-                )
-                fmri_files.extend(files)
+            files = self.get_session_fmri_files(
+                session, task, desc=desc, extension=extension
+            )
+            fmri_files.extend(files)
         return fmri_files
 
     def get_event_files(
         self, task: str, sessions: list[str] | None = None
     ) -> list[list[tuple[str, str]]]:
         """
-        Get the event files from all sessions for a specific task.
+        Get the event files from all sessions for a specific task. All event files for the specified task
+        and sessions will be returned, including all runs and phase encoding directions.
 
         Parameters
         ----------
         task : str
             The task identifier.
+        sessions : list of str, optional
+            The sessions to include. If None, all sessions are included.
 
         Returns
         -------
@@ -168,24 +152,17 @@ class FileMapper:
 
         event_files = []
         for session in sessions if sessions is not None else self.sessions:
-            # check for multiple runs
-            runs = self.tasks_runs[task][session]
-            # if multiple runs, loop through and get files for each run
-            if len(runs) > 1:
-                files = []
-                for run in runs:
-                    run_files = self.get_session_event_files(session, task, run=run)
-                    event_files.extend(run_files)
-            else:
-                files = self.get_session_event_files(session, task)
-                event_files.append(files)
+            files = self.get_session_event_files(session, task)
+            event_files.append(files)
         return event_files
 
     def get_confound_files(
         self, task: str, sessions: list[str] | None = None
     ) -> list[str]:
         """
-        Get the confound time series fMRIPrep output from all sessions for a specific task.
+        Get the confound time series fMRIPrep output from all sessions for a specific task. For
+        each session, all confound files for the specified task will be returned, including all
+        runs and phase encoding directions.
 
         Parameters
         ----------
@@ -209,16 +186,8 @@ class FileMapper:
 
         confound_files = []
         for session in sessions if sessions is not None else self.sessions:
-            # check for multiple runs
-            runs = self.tasks_runs[task][session]
-            # if multiple runs, loop through and get files for each run
-            if len(runs) > 1:
-                for run in runs:
-                    files = self.get_session_confound_files(session, task, run=run)
-                    confound_files.extend(files)
-            else:
-                files = self.get_session_confound_files(session, task)
-                confound_files.extend(files)
+            files = self.get_session_confound_files(session, task)
+            confound_files.extend(files)
         return confound_files
 
     @staticmethod
@@ -411,5 +380,26 @@ class FileMapper:
         float
             The repetition time (TR) in seconds.
         """
-        tr = self.layout.get_tr(subject=self.subject, task=task)
+        tr = self.layout.get_tr(derivatives=True, subject=self.subject, task=task)
         return tr
+
+    def _create_task_session_run_iter(self) -> None:
+        """
+        Create a nested dictionary to store iterations over tasks, sessions, and runs.
+        The structure is: {task: {session: [(ped, run), ...]}}
+        """
+        self.tasks_iter = {}
+        for task in self.tasks:
+            self.tasks_iter[task] = {}
+            # get sessions for task
+            task_sessions = self.layout.get_sessions(subject=self.subject, task=task)
+            for session in task_sessions:
+                found_files = self.layout.get(
+                    subject=self.subject, session=session, task=task
+                )
+                found_file_ents = [f.get_entities() for f in found_files]
+                # get unique (PhaseEncodingDirection, run) pairs for this session and task
+                unique_dir_runs = {
+                    (f.get("direction"), f.get("run")) for f in found_file_ents
+                }
+                self.tasks_iter[task][session] = list(unique_dir_runs)

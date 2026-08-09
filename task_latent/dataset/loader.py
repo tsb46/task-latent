@@ -16,9 +16,6 @@ from scipy.stats import zscore
 from task_latent.constants import MASK
 from task_latent.io.file import FileMapper
 
-# Hardcoded Phase-Encoding direction labels
-PHASE_ENCODING_DIRECTIONS: list[Literal["ap", "pa"]] = ["ap", "pa"]
-
 
 @dataclass(frozen=True)
 class ScanMetadata:
@@ -31,6 +28,10 @@ class ScanMetadata:
         Task label
     conditions: str
         Task conditions after grouping and exclusion - as specified in the `ibc_conditions.json` file
+    tr: float
+        Repetition time of the fMRI scan in seconds
+    n_frames: int
+        Number of frames in the fMRI scan
     ped: str
         Phase encoding
     session: str
@@ -42,6 +43,8 @@ class ScanMetadata:
 
     label: str
     conditions: list[str]
+    tr: float
+    n_frames: int
     ped: Literal["pa", "ap"]
     session: str
     run: str | None
@@ -55,18 +58,21 @@ class Dataset:
 
     Attributes
     -----------
-        fmri: list[np.ndarray]
-            List of 2D (time, voxel) matrices of fMRI scans
-        events: list[pd.DataFrame]
-            List of BIDs-formatted event Pandas dataframes. Order of dataframes matches
-            the scans in the fMRI list.
-        scan_metadata: list[ScanMetadata]
-            List of scan metadata. Order of metadata objects matches the scans in the
-            fMRI list.
-        subject: str
-            Subject label
-        normalize: bool
-            Whether the fMRI scans have been z-score normalized (along the time dimension)
+    fmri: list[np.ndarray]
+        List of 2D (time, voxel) matrices of fMRI scans
+    events: list[pd.DataFrame]
+        List of BIDs-formatted event Pandas dataframes. Order of dataframes matches
+        the scans in the fMRI list.
+    scan_metadata: list[ScanMetadata]
+        List of scan metadata. Order of metadata objects matches the scans in the
+        fMRI list.
+    task_index: dict[str, list[int]]
+        Dict containing the indices of each run for the same task in the
+        data lists (fmri, events, scan_metadata)
+    subject: str
+        Subject label
+    normalize: bool
+        Whether the fMRI scans have been z-score normalized (along the time dimension)
 
     """
 
@@ -74,6 +80,8 @@ class Dataset:
     fmri: list[np.ndarray]
     events: list[pd.DataFrame]
     scan_metadata: list[ScanMetadata]
+    # task to list index
+    task_index: dict[str, list[int]]
     # load parameters
     subject: str
     normalize: bool
@@ -122,10 +130,12 @@ class DataLoader:
 
     def __init__(self, dataset: Literal["ibc"], subject: str):
         """
-        Initialize the Dataset class for a specific subject in the IBC dataset.
+        Initialize the DataLoader class for a specific subject in the IBC dataset.
 
         Parameters
         ----------
+        dataset : str
+            The dataset name. Currently only supports "ibc".
         subject : str
             The subject identifier.
         """
@@ -168,7 +178,7 @@ class DataLoader:
         tasks : list[str] | None, optional
             The task identifier(s) to load. If None, all tasks will be loaded. Default is None
         normalize : bool, optional
-            Whether to normalize (z-score) the data along the time dimension. Default is True.
+            Whether to normalize (z-score) the fMRI data along the time dimension. Default is True.
         verbose : bool, optional
             Whether to print progress messages. Default is True.
         """
@@ -188,10 +198,16 @@ class DataLoader:
         fmri = []
         events = []
         scan_metadata = []
+        # counter for indexing tasks in the data lists
+        task_index = {t: [] for t in tasks}
+        scan_indx = 0
         # iterate through tasks to load data
         for task in tasks:
             if verbose:
                 print(f"Loading data for task '{task}'...")
+
+            # get tr for task
+            tr = self.file_mapper.get_tr(task)
 
             # get conditions for task
             try:
@@ -208,8 +224,8 @@ class DataLoader:
             # get conditions to ignore, if any
             condition_ignore = condition_metadata.get("condition_ignore", [])
 
-            # get runs available for task
-            runs = self.file_mapper.tasks_runs[task]
+            # get (run, phase-encoding direction) pairs available for task
+            runs_ped_pairs = self.file_mapper.tasks_iter[task]
 
             # get sessions avaialble for task
             task_sessions = self.file_mapper.get_sessions_task(task)
@@ -223,84 +239,78 @@ class DataLoader:
             for session in task_sessions:
                 if verbose:
                     print(f"  Loading session '{session}'...")
-                # there should be two phase encoding directions per session: 'ap' and 'pa'
-                # loop through phase encodings for session
-                for ped in PHASE_ENCODING_DIRECTIONS:
-                    if verbose and ped is not None:
-                        print(f"    Loading phase encoding direction '{ped}'...")
+                # loop through runs and phase encoding directions for this session
+                for ped, run in runs_ped_pairs[session]:
+                    if verbose:
+                        print(f"    Loading ped '{ped}' run '{run}'...")
+                    fmri_files = self.file_mapper.get_session_fmri_files(
+                        session, task, ped=ped, run=run, desc="preprocfinal"
+                    )
+                    # if no fMRI file is found, raise error
+                    if len(fmri_files) == 0:
+                        raise ValueError(
+                            f"No fMRI file found for session '{session}' "
+                            f"and task '{task}' and phase encoding direction '{ped}' "
+                            f"and run {run}."
+                        )
+                    elif len(fmri_files) > 1:
+                        # raise error if multiple fMRI files are found
+                        raise ValueError(
+                            f"Multiple fMRI files found for session '{session}' "
+                            f"and task '{task}' and phase encoding direction '{ped}' "
+                            f"and run {run}."
+                        )
+                    # load fMRI file into 2D array or 4D image
+                    fmri_data = self.load_fmri(
+                        fmri_files[0],
+                        normalize=normalize,
+                        verbose=verbose,
+                    )
+                    # append data to dataset
+                    fmri.append(fmri_data)
 
-                    # if runs is empty, create list with None to loop through at least once
-                    if len(runs[session]) == 0:
-                        runs_session = [None]
-                    else:
-                        runs_session = runs[session]
-                    # loop through runs for session
-                    for run in runs_session:
-                        if verbose and run is not None:
-                            print(f"    Loading run '{run}'...")
-                        fmri_files = self.file_mapper.get_session_fmri_files(
-                            session, task, ped=ped, run=run, desc="preprocfinal"
+                    # load event files
+                    event_file = self.file_mapper.get_session_event_files(
+                        session, task, ped=ped, run=run
+                    )
+                    if len(event_file) == 0:
+                        raise ValueError(
+                            f"Warning: No event file found for session '{session}' "
+                            f"and task '{task}' and phase encoding direction '{ped}' "
+                            f"and run {run}."
                         )
-                        # if no fMRI file is found, raise error
-                        if len(fmri_files) == 0:
-                            raise ValueError(
-                                f"No fMRI file found for session '{session}' "
-                                f"and task '{task}' and phase encoding direction '{ped}' "
-                                f"and run {run}."
-                            )
-                        elif len(fmri_files) > 1:
-                            # raise error if multiple fMRI files are found
-                            raise ValueError(
-                                f"Multiple fMRI files found for session '{session}' "
-                                f"and task '{task}' and phase encoding direction '{ped}' "
-                                f"and run {run}."
-                            )
-                        # load fMRI file into 2D array or 4D image
-                        fmri_data = self.load_fmri(
-                            fmri_files[0],
-                            normalize=normalize,
-                            verbose=verbose,
+                    elif len(event_file) > 1:
+                        raise ValueError(
+                            f"Multiple event files found for session '{session}' "
+                            f"and task '{task}' and phase encoding direction '{ped}' "
+                            f"and run {run}."
                         )
-                        # append data to dataset
-                        fmri.append(fmri_data)
+                    # convert event file to dataframe
+                    event_df = self.events_to_df(
+                        fp_event=event_file[0],
+                        task=task,
+                        ped=ped,
+                        session=session,
+                        conditions=conditions,
+                        condition_grouper=condition_grouper,
+                        condition_ignore=condition_ignore,
+                    )
+                    events.append(event_df)
 
-                        # load event files
-                        event_file = self.file_mapper.get_session_event_files(
-                            session, task, ped=ped, run=run
-                        )
-                        if len(event_file) == 0:
-                            raise ValueError(
-                                f"Warning: No event file found for session '{session}' "
-                                f"and task '{task}' and phase encoding direction '{ped}' "
-                                f"and run {run}."
-                            )
-                        elif len(event_file) > 1:
-                            raise ValueError(
-                                f"Multiple event files found for session '{session}' "
-                                f"and task '{task}' and phase encoding direction '{ped}' "
-                                f"and run {run}."
-                            )
-                        # convert event file to dataframe
-                        event_df = self.events_to_df(
-                            fp_event=event_file[0],
-                            task=task,
-                            ped=ped,
-                            session=session,
-                            conditions=conditions,
-                            condition_grouper=condition_grouper,
-                            condition_ignore=condition_ignore,
-                        )
-                        events.append(event_df)
+                    # create scan metadata object
+                    metadata = ScanMetadata(
+                        label=task,
+                        conditions=conditions,
+                        ped=ped,
+                        tr=tr,
+                        n_frames=fmri_data.shape[0],
+                        session=session,
+                        run=run,
+                    )
+                    scan_metadata.append(metadata)
 
-                        # create scan metadata object
-                        metadata = ScanMetadata(
-                            label=task,
-                            conditions=conditions,
-                            ped=ped,
-                            session=session,
-                            run=run,
-                        )
-                        scan_metadata.append(metadata)
+                    # append scan index to task_index dict
+                    task_index[task].append(scan_indx)
 
         if verbose:
             print(f"Data loading complete for subject '{self.subject}'")
@@ -309,6 +319,7 @@ class DataLoader:
             fmri=fmri,
             events=events,
             scan_metadata=scan_metadata,
+            task_index=task_index,
             subject=self.subject,
             normalize=normalize,
         )
