@@ -6,4 +6,4 @@ Constants for the preprocessing pipeline.
 HIGHPASS = 0.01
 
 # Full width at half maximum for Gaussian smoothing
-FWHM = 4
+FWHM = 5
