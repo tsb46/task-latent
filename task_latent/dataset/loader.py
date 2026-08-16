@@ -4,6 +4,7 @@ a given subject in the IBC dataset.
 """
 
 import json
+import math
 from dataclasses import dataclass
 from typing import Literal
 
@@ -157,7 +158,8 @@ class DataLoader:
         # Conditions for IBC tasks
         with open("task_latent/dataset/ibc_conditions.json", "r") as f:
             try:
-                self.condition_metadata = json.load(f)
+                # load JSON and convert nulls to NaN for consistency
+                self.condition_metadata = json.load(f, object_hook=convert_none_to_nan)
             except json.JSONDecodeError as e:
                 raise ValueError(f"Error loading IBC conditions JSON file: {e}") from e
 
@@ -199,13 +201,25 @@ class DataLoader:
         events = []
         scan_metadata = []
         # counter for indexing tasks in the data lists
-        task_index = {t: [] for t in tasks}
+        task_index = {
+            t: []
+            for t in tasks
+            if self.condition_metadata.get(t, {}).get("keep", False)
+        }
         scan_indx = 0
         # iterate through tasks to load data
         for task in tasks:
             if verbose:
                 print(f"Loading data for task '{task}'...")
 
+            # check whether the task is marked to be kept in the conditions JSON file
+            task_metadata = self.condition_metadata.get(task, {})
+            if not task_metadata.get("keep", False):
+                if verbose:
+                    print(
+                        f"  Skipping task '{task}' as it is marked to be ignored in the conditions JSON file."
+                    )
+                continue
             # get tr for task
             tr = self.file_mapper.get_tr(task)
 
@@ -385,6 +399,13 @@ class DataLoader:
                     f"The event dataframe for task {task} contains a condition "
                     f"not specified in `ibc_conditions.json`: {cond}"
                 )
+        # ensure that all conditions in the conditions list are present in the event dataframe
+        for cond in conditions:
+            if cond not in ev_conditions:
+                raise ValueError(
+                    f"The event dataframe for task {task} is missing a condition "
+                    f"specified in `ibc_conditions.json`: {cond}"
+                )
 
         return event_df
 
@@ -449,3 +470,16 @@ class DataLoader:
             "to_4d did not return a Nifti1Image."
         )
         return fmri_4d_img
+
+
+def convert_none_to_nan(obj):
+    """
+    Recursively convert None values in a nested structure (dicts, lists) to NaN.
+    """
+    if isinstance(obj, dict):
+        return {k: convert_none_to_nan(v) for k, v in obj.items()}
+    elif isinstance(obj, list):
+        return [convert_none_to_nan(element) for element in obj]
+    elif obj is None:
+        return math.nan
+    return obj
