@@ -1,5 +1,6 @@
 {
   "ArchiStandard": {
+    "keep": true,
     "condition": [
       "audio_computation",
       "audio_sentence",
@@ -16,6 +17,7 @@
     "condition_ignore": []
   },
   "ArchiSpatial": {
+    "keep": true,
     "condition": [
       "object_grasp",
       "object_orientation",
@@ -27,6 +29,7 @@
     "condition_ignore": []
   },
   "ArchiSocial": {
+    "keep": true,
     "condition": [
       "false_belief_audio",
       "false_belief_video",
@@ -38,9 +41,15 @@
       "triangle_random"
     ],
     "condition_grouper": {},
-    "condition_ignore": []
+    "condition_ignore": [
+      "mechanistic_video_pourquoi",
+      "mechanistic_audio_pourquoi",
+      "false_belief_video_pourquoi",
+      "false_belief_audio_pourquoi"
+    ]
   },
   "ArchiEmotional": {
+    "keep": true,
     "condition": [
       "expression_control",
       "expression_gender",
@@ -53,16 +62,19 @@
     "condition_ignore": []
   },
   "HcpEmotion": {
+    "keep": true,
     "condition": ["face", "shape"],
     "condition_grouper": {},
     "condition_ignore": []
   },
   "HcpGambling": {
-    "condition": ["punishment", "reward"],
+    "keep": true,
+    "condition": ["punishment", "reward", "neutral"],
     "condition_grouper": {},
     "condition_ignore": []
   },
   "HcpMotor": {
+    "keep": true,
     "condition": [
       "cue",
       "left_foot",
@@ -81,21 +93,25 @@
     "condition_ignore": []
   },
   "HcpLanguage": {
+    "keep": true,
     "condition": ["math", "story"],
     "condition_grouper": {},
-    "condition_ignore": []
+    "condition_ignore": ["dummy"]
   },
   "HcpRelational": {
+    "keep": true,
     "condition": ["control", "relational"],
     "condition_grouper": {},
     "condition_ignore": []
   },
   "HcpSocial": {
+    "keep": true,
     "condition": ["mental", "random"],
     "condition_grouper": {},
     "condition_ignore": []
   },
   "HcpWm": {
+    "keep": true,
     "condition": [
       "0back_body",
       "0back_face",
@@ -110,6 +126,7 @@
     "condition_ignore": []
   },
   "RSVPLanguage": {
+    "keep": true,
     "condition": [
       "complex",
       "consonant_strings",
@@ -130,6 +147,7 @@
     "condition_ignore": []
   },
   "MTTWE": {
+    "keep": true,
     "condition": [
       "we_westside_close_event",
       "we_all_event_response",
@@ -148,6 +166,7 @@
     "condition_ignore": []
   },
   "MTTNS": {
+    "keep": true,
     "condition": [
       "sn_southside_far_event",
       "sn_all_event_response",
@@ -166,6 +185,7 @@
     "condition_ignore": []
   },
   "PreferenceFood": {
+    "keep": true,
     "condition": ["food"],
     "condition_grouper": {
       "food_too-slow": "food"
@@ -173,6 +193,7 @@
     "condition_ignore": []
   },
   "PreferencePaintings": {
+    "keep": true,
     "condition": ["painting"],
     "condition_grouper": {
       "painting_too-slow": "painting"
@@ -180,6 +201,7 @@
     "condition_ignore": []
   },
   "PreferenceFaces": {
+    "keep": true,
     "condition": ["face"],
     "condition_grouper": {
       "face_too-slow": "face"
@@ -187,6 +209,7 @@
     "condition_ignore": []
   },
   "PreferenceHouses": {
+    "keep": true,
     "condition": ["house"],
     "condition_grouper": {
       "house_too-slow": "house"
@@ -194,21 +217,25 @@
     "condition_ignore": []
   },
   "TheoryOfMind": {
+    "keep": true,
     "condition": ["belief", "photo"],
     "condition_grouper": {},
     "condition_ignore": []
   },
   "EmotionalPain": {
+    "keep": true,
     "condition": ["emotional_pain", "physical_pain"],
     "condition_grouper": {},
     "condition_ignore": []
   },
   "PainMovie": {
+    "keep": true,
     "condition": ["pain", "mental"],
     "condition_grouper": {},
     "condition_ignore": []
   },
   "VSTM": {
+    "keep": true,
     "condition": ["memorization", "response"],
     "condition_grouper": {
       "memorization_num_6": "memorization",
@@ -227,6 +254,7 @@
     "condition_ignore": []
   },
   "Enumeration": {
+    "keep": true,
     "condition": ["memorization", "response"],
     "condition_grouper": {
       "memorization_num_6": "memorization",
@@ -249,6 +277,7 @@
     "condition_ignore": []
   },
   "Self": {
+    "keep": true,
     "condition": [
       "encode_other",
       "encode_self",
@@ -272,14 +301,16 @@
       "old_self_no_response": "recognition_self",
       "old_other_no_response": "recognition_other"
     },
-    "condition_ignore": ["new_no_response"]
+    "condition_ignore": ["new_no_response", "new_cr"]
   },
   "Bang": {
+    "keep": true,
     "condition": ["no_talk", "talk"],
     "condition_grouper": {},
     "condition_ignore": []
   },
   "WedgeClock": {
+    "keep": true,
     "condition": [
       "left_meridian",
       "lower_left",
@@ -294,6 +325,7 @@
     "condition_ignore": []
   },
   "WedgeAnti": {
+    "keep": true,
     "condition": [
       "left_meridian",
       "lower_left",
@@ -308,21 +340,25 @@
     "condition_ignore": []
   },
   "ContRing": {
+    "keep": true,
     "condition": ["foveal", "middle", "peripheral"],
     "condition_grouper": {},
     "condition_ignore": []
   },
   "ExpRing": {
+    "keep": true,
     "condition": ["foveal", "middle", "peripheral"],
     "condition_grouper": {},
     "condition_ignore": []
   },
   "Lec2": {
+    "keep": true,
     "condition": ["attend", "unattend"],
     "condition_grouper": {},
-    "condition_ignore": ["Bfix", "start_random_string"]
+    "condition_ignore": ["Bfix", "start_random_string", "Suite"]
   },
   "Audi": {
+    "keep": true,
     "condition": [
       "alphabet",
       "animals",
@@ -343,6 +379,7 @@
     "condition_ignore": ["silence", "Bfix", "start_sound", "cut", "1"]
   },
   "Visu": {
+    "keep": true,
     "condition": [
       "animal",
       "characters",
@@ -361,6 +398,7 @@
     "condition_ignore": ["Bfix"]
   },
   "Lec1": {
+    "keep": true,
     "condition": ["pseudoword", "random_string", "word"],
     "condition_grouper": {},
     "condition_ignore": [
@@ -371,6 +409,7 @@
     ]
   },
   "MVEB": {
+    "keep": true,
     "condition": ["letters_same", "letters_different", "response"],
     "condition_grouper": {
       "2_letters_same": "letters_same",
@@ -380,9 +419,10 @@
       "4_letters_different": "letters_different",
       "6_letters_different": "letters_different"
     },
-    "condition_ignore": ["cross", "blank2"]
+    "condition_ignore": ["cross", "blank2", "p_startup"]
   },
   "MVIS": {
+    "keep": true,
     "condition": ["dots", "dots_control", "response"],
     "condition_grouper": {
       "2_dots": "dots",
@@ -392,9 +432,10 @@
       "6_dots": "dots",
       "6_dots_control": "dots_control"
     },
-    "condition_ignore": ["grid", "Bfix", "maintenance"]
+    "condition_ignore": ["grid", "Bfix", "maintenance", "p_startup"]
   },
   "Moto": {
+    "keep": true,
     "condition": [
       "finger_left",
       "finger_right",
@@ -424,6 +465,7 @@
     "condition_ignore": ["Bfix"]
   },
   "MCSE": {
+    "keep": true,
     "condition": [
       "high_salience_left",
       "high_salience_right",
@@ -437,20 +479,310 @@
     "condition_ignore": ["Bfix"]
   },
   "Audio": {
+    "keep": true,
     "condition": [
       "animal",
       "catch",
       "music",
       "nature",
-      "silence",
       "speech",
       "tool",
       "voice"
     ],
-    "condition_grouper": {},
-    "condition_ignore": ["fixation"]
+    "condition_grouper": {
+      "music_8": "music",
+      "animal_36": "animal",
+      "voice_31": "voice",
+      "animal_9": "animal",
+      "music_3": "music",
+      "tools_24": "tool",
+      "speech_29": "speech",
+      "tools_10": "tool",
+      "animal_48": "animal",
+      "tools_29": "tool",
+      "music_35": "music",
+      "nature_12": "nature",
+      "speech_21": "speech",
+      "tools_15": "tool",
+      "music_33": "music",
+      "animal_8": "animal",
+      "nature_24": "nature",
+      "animal_34": "animal",
+      "speech_35": "speech",
+      "nature_33": "nature",
+      "music_39": "music",
+      "speech_18": "speech",
+      "nature_3": "nature",
+      "tools_8": "tool",
+      "music_20": "music",
+      "voice_24": "voice",
+      "speech_4": "speech",
+      "nature_9": "nature",
+      "animal_23": "animal",
+      "tools_39": "tool",
+      "speech_27": "speech",
+      "music_28": "music",
+      "voice_32": "voice",
+      "music_7": "music",
+      "voice_11": "voice",
+      "speech_8": "speech",
+      "nature_18": "nature",
+      "voice_37": "voice",
+      "tools_47": "tool",
+      "music_32": "music",
+      "voice_36": "voice",
+      "nature_39": "nature",
+      "animal_13": "animal",
+      "voice_7": "voice",
+      "animal_14": "animal",
+      "music_30": "music",
+      "tools_48": "tool",
+      "nature_41": "nature",
+      "voice_13": "voice",
+      "tools_22": "tool",
+      "animal_27": "animal",
+      "music_12": "music",
+      "nature_19": "nature",
+      "tools_19": "tool",
+      "animal_7": "animal",
+      "nature_6": "nature",
+      "music_23": "music",
+      "voice_23": "voice",
+      "tools_34": "tool",
+      "speech_38": "speech",
+      "voice_9": "voice",
+      "nature_4": "nature",
+      "voice_16": "voice",
+      "tools_37": "tool",
+      "speech_22": "speech",
+      "animal_16": "animal",
+      "speech_25": "speech",
+      "animal_10": "animal",
+      "voice_15": "voice",
+      "speech_12": "speech",
+      "nature_7": "nature",
+      "speech_2": "speech",
+      "music_26": "music",
+      "nature_46": "nature",
+      "tools_40": "tool",
+      "speech_15": "speech",
+      "nature_27": "nature",
+      "speech_11": "speech",
+      "voice_25": "voice",
+      "animal_15": "animal",
+      "speech_26": "speech",
+      "voice_17": "voice",
+      "nature_8": "nature",
+      "speech_47": "speech",
+      "tools_33": "tool",
+      "music_42": "music",
+      "animal_28": "animal",
+      "nature_16": "nature",
+      "tools_7": "tool",
+      "nature_35": "nature",
+      "voice_6": "voice",
+      "animal_25": "animal",
+      "voice_29": "voice",
+      "music_17": "music",
+      "animal_5": "animal",
+      "music_9": "music",
+      "tools_31": "tool",
+      "animal_22": "animal",
+      "voice_34": "voice",
+      "music_38": "music",
+      "tools_6": "tool",
+      "music_6": "music",
+      "voice_39": "voice",
+      "music_27": "music",
+      "tools_26": "tool",
+      "nature_42": "nature",
+      "animal_47": "animal",
+      "tools_2": "tool",
+      "voice_27": "voice",
+      "nature_20": "nature",
+      "speech_14": "speech",
+      "music_22": "music",
+      "speech_16": "speech",
+      "tools_44": "tool",
+      "music_37": "music",
+      "speech_36": "speech",
+      "music_10": "music",
+      "nature_13": "nature",
+      "animal_45": "animal",
+      "speech_37": "speech",
+      "animal_2": "animal",
+      "voice_42": "voice",
+      "music_36": "music",
+      "speech_46": "speech",
+      "animal_17": "animal",
+      "nature_26": "nature",
+      "music_16": "music",
+      "nature_25": "nature",
+      "voice_46": "voice",
+      "nature_11": "nature",
+      "tools_46": "tool",
+      "voice_47": "voice",
+      "animal_29": "animal",
+      "tools_12": "tool",
+      "speech_13": "speech",
+      "voice_8": "voice",
+      "tools_13": "tool",
+      "animal_39": "animal",
+      "speech_33": "speech",
+      "nature_30": "nature",
+      "voice_48": "voice",
+      "tools_30": "tool",
+      "animal_20": "animal",
+      "speech_24": "speech",
+      "speech_10": "speech",
+      "music_47": "music",
+      "animal_11": "animal",
+      "nature_14": "nature",
+      "animal_46": "animal",
+      "voice_19": "voice",
+      "speech_45": "speech",
+      "tools_17": "tool",
+      "speech_32": "speech",
+      "music_1": "music",
+      "animal_30": "animal",
+      "music_19": "music",
+      "speech_41": "speech",
+      "tools_4": "tool",
+      "nature_1": "nature",
+      "speech_3": "speech",
+      "tools_21": "tool",
+      "voice_40": "voice",
+      "nature_47": "nature",
+      "music_15": "music",
+      "nature_31": "nature",
+      "voice_14": "voice",
+      "speech_1": "speech",
+      "animal_31": "animal",
+      "music_4": "music",
+      "nature_43": "nature",
+      "animal_18": "animal",
+      "speech_43": "speech",
+      "animal_37": "animal",
+      "voice_38": "voice",
+      "tools_43": "tool",
+      "animal_1": "animal",
+      "tools_38": "tool",
+      "speech_6": "speech",
+      "nature_37": "nature",
+      "music_2": "music",
+      "voice_33": "voice",
+      "nature_21": "nature",
+      "voice_10": "voice",
+      "animal_41": "animal",
+      "voice_28": "voice",
+      "nature_45": "nature",
+      "voice_30": "voice",
+      "nature_32": "nature",
+      "tools_41": "tool",
+      "animal_12": "animal",
+      "nature_44": "nature",
+      "animal_21": "animal",
+      "music_31": "music",
+      "tools_20": "tool",
+      "speech_17": "speech",
+      "nature_23": "nature",
+      "tools_9": "tool",
+      "music_21": "music",
+      "voice_43": "voice",
+      "nature_29": "nature",
+      "music_48": "music",
+      "voice_26": "voice",
+      "animal_33": "animal",
+      "voice_18": "voice",
+      "tools_25": "tool",
+      "animal_26": "animal",
+      "speech_19": "speech",
+      "music_43": "music",
+      "tools_3": "tool",
+      "voice_5": "voice",
+      "music_40": "music",
+      "tools_1": "tool",
+      "speech_9": "speech",
+      "tools_23": "tool",
+      "speech_5": "speech",
+      "music_34": "music",
+      "speech_20": "speech",
+      "tools_14": "tool",
+      "animal_19": "animal",
+      "speech_28": "speech",
+      "music_41": "music",
+      "nature_2": "nature",
+      "music_11": "music",
+      "speech_40": "speech",
+      "music_14": "music",
+      "voice_41": "voice",
+      "nature_36": "nature",
+      "music_18": "music",
+      "animal_35": "animal",
+      "voice_35": "voice",
+      "nature_17": "nature",
+      "voice_3": "voice",
+      "speech_23": "speech",
+      "tools_36": "tool",
+      "animal_43": "animal",
+      "voice_21": "voice",
+      "speech_34": "speech",
+      "tools_28": "tool",
+      "speech_44": "speech",
+      "voice_2": "voice",
+      "nature_40": "nature",
+      "music_44": "music",
+      "nature_5": "nature",
+      "animal_32": "animal",
+      "nature_22": "nature",
+      "voice_12": "voice",
+      "nature_34": "nature",
+      "voice_20": "voice",
+      "tools_18": "tool",
+      "music_24": "music",
+      "tools_5": "tool",
+      "nature_28": "nature",
+      "speech_48": "speech",
+      "animal_44": "animal",
+      "nature_38": "nature",
+      "animal_4": "animal",
+      "music_29": "music",
+      "nature_15": "nature",
+      "animal_38": "animal",
+      "music_5": "music",
+      "tools_16": "tool",
+      "music_25": "music",
+      "voice_1": "voice",
+      "speech_42": "speech",
+      "music_45": "music",
+      "tools_11": "tool",
+      "music_46": "music",
+      "animal_40": "animal",
+      "tools_32": "tool",
+      "speech_39": "speech",
+      "tools_42": "tool",
+      "voice_45": "voice",
+      "animal_42": "animal",
+      "tools_27": "tool",
+      "animal_6": "animal",
+      "tools_35": "tool",
+      "nature_48": "nature",
+      "speech_31": "speech",
+      "animal_24": "animal",
+      "tools_45": "tool",
+      "nature_10": "nature",
+      "voice_4": "voice",
+      "animal_3": "animal",
+      "music_13": "music",
+      "voice_44": "voice",
+      "speech_7": "speech",
+      "voice_22": "voice",
+      "speech_30": "speech"
+    },
+    "condition_ignore": ["fixation", "silence"]
   },
   "Attention": {
+    "keep": true,
     "condition": [
       "double_congruent",
       "double_cue",
@@ -459,15 +791,20 @@
       "spatial_cue",
       "spatial_incongruent"
     ],
-    "condition_grouper": {},
-    "condition_ignore": []
+    "condition_grouper": {
+      "doublecue": "double_cue",
+      "spatialcue": "spatial_cue"
+    },
+    "condition_ignore": ["fmri_buffer", "test_start_block", "end", "fixation", "rest_block"]
   },
   "StopSignal": {
+    "keep": true,
     "condition": ["go", "stop"],
     "condition_grouper": {},
-    "condition_ignore": []
+    "condition_ignore": ["fmri_buffer", "test_start_block", "rest_block", "end"]
   },
   "TwoByTwo": {
+    "keep": true,
     "condition": [
       "cue_taskstay_cuestay",
       "cue_taskstay_cueswitch",
@@ -479,29 +816,47 @@
       "stim_taskswitch_cueswitch"
     ],
     "condition_grouper": {},
-    "condition_ignore": []
+    "condition_ignore": ["fmri_buffer", "test_start_block", "rest_block", "end", "fixation", "set_stims"]
   },
   "Discount": {
-    "condition": ["amount", "delay"],
+    "keep": false,
+    "condition": ["stim"],
     "condition_grouper": {},
-    "condition_ignore": []
+    "condition_ignore": ["fmri_buffer", "test_start_block", "stim", "rest_block", "end"]
   },
   "SelectiveStopSignal": {
+    "keep": true,
     "condition": ["go_critical", "go_noncritical", "ignore", "stop"],
-    "condition_grouper": {},
-    "condition_ignore": []
+    "condition_grouper": {
+      "ignore_critical": "ignore",
+      "ignore_noncritical": "ignore",
+      "stop_critical": "stop",
+      "stop_noncritical": "stop"
+    },
+    "condition_ignore": ["fmri_buffer", "test_start_block", "rest_block", "end"]
   },
   "Stroop": {
+    "keep": true,
     "condition": ["congruent", "incongruent"],
     "condition_grouper": {},
-    "condition_ignore": []
+    "condition_ignore": ["fmri_buffer", "test_start_block", "fixation", "end"]
   },
   "ColumbiaCards": {
-    "condition": ["gain", "loss", "num_loss_cards"],
+    "keep": true,
+    "condition": ["card_flip"],
     "condition_grouper": {},
-    "condition_ignore": []
+    "condition_ignore": [
+      "fmri_buffer", 
+      "test_start_block", 
+      "inter_trials",
+      "rest_block", 
+      "calculate reward", 
+      "reward", 
+      "end"
+  ]
   },
   "DotPatterns": {
+    "keep": true,
     "condition": [
       "correct_cue_correct_probe",
       "correct_cue_incorrect_probe",
@@ -509,20 +864,44 @@
       "incorrect_cue_correct_probe",
       "incorrect_cue_incorrect_probe"
     ],
-    "condition_grouper": {},
-    "condition_ignore": []
+    "condition_grouper": {
+      "cue_AX": "cue",
+      "cue_BX": "cue",
+      "cue_AY": "cue",
+      "cue_BY": "cue",
+      "probe_AX": "correct_cue_correct_probe",
+      "probe_BX": "incorrect_cue_correct_probe",
+      "probe_AY": "correct_cue_incorrect_probe",
+      "probe_BY": "incorrect_cue_incorrect_probe"
+    },
+    "condition_ignore": ["fmri_buffer", "test_start_block", "rest_block", "end", "fixation"]
   },
   "WardAndAllport": {
+    "keep": true,
     "condition": [
       "planning_ambiguous_direct",
       "planning_ambiguous_intermediate",
       "planning_unambiguous_direct",
-      "planning_unambiguous_intermediate"
+      "planning_unambiguous_intermediate",
+      "move_ambiguous_direct",
+      "move_ambiguous_intermediate",
+      "move_unambiguous_direct",
+      "move_unambiguous_intermediate"
     ],
-    "condition_grouper": {},
-    "condition_ignore": []
+    "condition_grouper": {
+      "planning_PA_with_intermediate": "planning_ambiguous_intermediate",
+      "planning_PA_without_intermediate": "planning_ambiguous_direct",
+      "planning_UA_with_intermediate": "planning_unambiguous_intermediate",
+      "planning_UA_without_intermediate": "planning_unambiguous_direct",
+      "move_PA_with_intermediate": "move_ambiguous_intermediate",
+      "move_PA_without_intermediate": "move_ambiguous_direct",
+      "move_UA_with_intermediate": "move_unambiguous_intermediate",
+      "move_UA_without_intermediate": "move_unambiguous_direct"
+    },
+    "condition_ignore": ["fmri_buffer", "practice_start_block", "test_start_block"]
   },
   "BiologicalMotion1": {
+    "keep": true,
     "condition": [
       "global_inverted",
       "global_upright",
@@ -530,9 +909,10 @@
       "natural_upright"
     ],
     "condition_grouper": {},
-    "condition_ignore": []
+    "condition_ignore": ["initial_fix", "fixation_block", "fixation"]
   },
   "BiologicalMotion2": {
+    "keep": true,
     "condition": [
       "modified_inverted",
       "modified_upright",
@@ -540,9 +920,10 @@
       "natural_upright"
     ],
     "condition_grouper": {},
-    "condition_ignore": []
+    "condition_ignore": ["initial_fix", "fixation_block", "fixation"]
   },
   "MathLanguage": {
+    "keep": true,
     "condition": [
       "arithmetic_fact_auditory",
       "arithmetic_fact_visual",
@@ -562,10 +943,16 @@
       "wordlist_visual"
     ],
     "condition_grouper": {},
-    "condition_ignore": ["keypressed", "empty", "blank", "bip"]
+    "condition_ignore": ["keypressed", "empty", "blank", "bip", "TTL"]
   },
   "SpatialNavigation": {
-    "condition": ["control", "pointing_control", "pointing_experimental"],
+    "keep": true,
+    "condition": [
+      "experimental",
+      "pointing_experimental",
+      "control",
+      "pointing_control"
+    ],
     "condition_grouper": {
       "intersection_0": "intersection",
       "intersection_1": "intersection",
@@ -574,14 +961,14 @@
       "encoding_end": "encoding_phase"
     },
     "condition_ignore": [
-      "intersection",
-      "experimental",
-      "navigation",
       "fixation",
-      "encoding_phase"
+      "encoding_phase",
+      "navigation",
+      "intersection"
     ]
   },
   "EmoMem": {
+    "keep": true,
     "condition": [
       "negative_image",
       "neutral_image",
@@ -592,6 +979,7 @@
     "condition_ignore": []
   },
   "EmoReco": {
+    "keep": true,
     "condition": [
       "angry_female",
       "angry_male",
@@ -602,21 +990,25 @@
     "condition_ignore": []
   },
   "StopNogo": {
+    "keep": true,
     "condition": ["go", "nogo", "successful_stop", "unsuccessful_stop"],
     "condition_grouper": {},
     "condition_ignore": []
   },
   "Catell": {
+    "keep": true,
     "condition": ["easy", "hard"],
     "condition_grouper": {},
     "condition_ignore": []
   },
   "FingerTapping": {
-    "condition": ["chosen", "no_tap", "specified"],
+    "keep": true,
+    "condition": ["chosen", "specified"],
     "condition_grouper": {},
-    "condition_ignore": []
+    "condition_ignore": [null]
   },
   "VSTMC": {
+    "keep": true,
     "condition": [
       "resp_load1",
       "resp_load2",
@@ -629,31 +1021,302 @@
     "condition_ignore": []
   },
   "RewProc": {
+    "keep": true,
     "condition": [
-      "green",
-      "left",
-      "minus_10",
-      "minus_20",
-      "plus_10",
-      "plus_20",
-      "purple",
-      "right",
-      "stay",
-      "switch"
+      "resp_purple-left_stay",
+      "resp_purple-left_switch",
+      "resp_purple-right_stay",
+      "resp_purple-right_switch",
+      "resp_green-left_stay",
+      "resp_green-left_switch",
+      "resp_green-right_stay",
+      "resp_green-right_switch"
+    ],
+    "condition_grouper": {},
+    "condition_ignore": [
+      "stim", 
+      "prefix", 
+      "postfix",
+      "out_-20",
+      "out_+20",
+      "out_-10",
+      "out_+10",
+      "resp_purple-left_init"
     ]
   },
   "NARPS": {
+    "keep": true,
     "condition": [
-      "gain",
-      "loss",
-      "stim",
-      "strongly_accept",
+      "stim"
+    ],
+    "condition_grouper": {
+      "stim_+10_-13": "stim",
+      "stim_+18_-13": "stim",
+      "stim_+11_-6": "stim",
+      "stim_+19_-18": "stim",
+      "stim_+6_-14": "stim",
+      "stim_+20_-18": "stim",
+      "stim_+19_-10": "stim",
+      "stim_+14_-9": "stim",
+      "stim_+5_-18": "stim",
+      "stim_+11_-20": "stim",
+      "stim_+18_-20": "stim",
+      "stim_+5_-14": "stim",
+      "stim_+15_-11": "stim",
+      "stim_+12_-11": "stim",
+      "stim_+9_-14": "stim",
+      "stim_+7_-9": "stim",
+      "stim_+11_-5": "stim",
+      "stim_+6_-20": "stim",
+      "stim_+18_-7": "stim",
+      "stim_+14_-12": "stim",
+      "stim_+7_-11": "stim",
+      "stim_+14_-5": "stim",
+      "stim_+7_-15": "stim",
+      "stim_+12_-9": "stim",
+      "stim_+10_-7": "stim",
+      "stim_+11_-11": "stim",
+      "stim_+11_-15": "stim",
+      "stim_+6_-17": "stim",
+      "stim_+13_-15": "stim",
+      "stim_+10_-18": "stim",
+      "stim_+14_-19": "stim",
+      "stim_+6_-10": "stim",
+      "stim_+5_-8": "stim",
+      "stim_+7_-5": "stim",
+      "stim_+5_-11": "stim",
+      "stim_+15_-15": "stim",
+      "stim_+17_-8": "stim",
+      "stim_+14_-18": "stim",
+      "stim_+9_-17": "stim",
+      "stim_+20_-15": "stim",
+      "stim_+11_-19": "stim",
+      "stim_+12_-8": "stim",
+      "stim_+13_-5": "stim",
+      "stim_+8_-18": "stim",
+      "stim_+16_-14": "stim",
+      "stim_+8_-13": "stim",
+      "stim_+11_-12": "stim",
+      "stim_+18_-12": "stim",
+      "stim_+20_-9": "stim",
+      "stim_+15_-9": "stim",
+      "stim_+8_-7": "stim",
+      "stim_+19_-9": "stim",
+      "stim_+17_-16": "stim",
+      "stim_+12_-16": "stim",
+      "stim_+14_-20": "stim",
+      "stim_+20_-8": "stim",
+      "stim_+16_-17": "stim",
+      "stim_+5_-5": "stim",
+      "stim_+16_-16": "stim",
+      "stim_+13_-8": "stim",
+      "stim_+14_-7": "stim",
+      "stim_+17_-15": "stim",
+      "stim_+18_-5": "stim",
+      "stim_+17_-20": "stim",
+      "stim_+15_-6": "stim",
+      "stim_+8_-5": "stim",
+      "stim_+18_-18": "stim",
+      "stim_+19_-8": "stim",
+      "stim_+6_-7": "stim",
+      "stim_+17_-11": "stim",
+      "stim_+17_-12": "stim",
+      "stim_+16_-7": "stim",
+      "stim_+5_-17": "stim",
+      "stim_+10_-19": "stim",
+      "stim_+13_-16": "stim",
+      "stim_+6_-13": "stim",
+      "stim_+5_-19": "stim",
+      "stim_+8_-14": "stim",
+      "stim_+10_-8": "stim",
+      "stim_+6_-9": "stim",
+      "stim_+18_-6": "stim",
+      "stim_+8_-11": "stim",
+      "stim_+12_-6": "stim",
+      "stim_+5_-7": "stim",
+      "stim_+16_-18": "stim",
+      "stim_+18_-16": "stim",
+      "stim_+11_-17": "stim",
+      "stim_+11_-14": "stim",
+      "stim_+9_-6": "stim",
+      "stim_+19_-12": "stim",
+      "stim_+15_-7": "stim",
+      "stim_+19_-17": "stim",
+      "stim_+14_-11": "stim",
+      "stim_+16_-13": "stim",
+      "stim_+6_-8": "stim",
+      "stim_+13_-11": "stim",
+      "stim_+11_-16": "stim",
+      "stim_+7_-16": "stim",
+      "stim_+12_-20": "stim",
+      "stim_+7_-12": "stim",
+      "stim_+14_-10": "stim",
+      "stim_+19_-16": "stim",
+      "stim_+9_-12": "stim",
+      "stim_+19_-13": "stim",
+      "stim_+19_-6": "stim",
+      "stim_+5_-20": "stim",
+      "stim_+12_-12": "stim",
+      "stim_+15_-18": "stim",
+      "stim_+17_-19": "stim",
+      "stim_+11_-13": "stim",
+      "stim_+12_-5": "stim",
+      "stim_+14_-15": "stim",
+      "stim_+14_-17": "stim",
+      "stim_+12_-10": "stim",
+      "stim_+19_-15": "stim",
+      "stim_+13_-14": "stim",
+      "stim_+18_-8": "stim",
+      "stim_+16_-19": "stim",
+      "stim_+10_-9": "stim",
+      "stim_+8_-9": "stim",
+      "stim_+9_-19": "stim",
+      "stim_+14_-6": "stim",
+      "stim_+20_-19": "stim",
+      "stim_+9_-16": "stim",
+      "stim_+6_-15": "stim",
+      "stim_+8_-17": "stim",
+      "stim_+20_-12": "stim",
+      "stim_+16_-10": "stim",
+      "stim_+7_-10": "stim",
+      "stim_+10_-10": "stim",
+      "stim_+19_-20": "stim",
+      "stim_+18_-15": "stim",
+      "stim_+10_-17": "stim",
+      "stim_+8_-6": "stim",
+      "stim_+7_-6": "stim",
+      "stim_+20_-5": "stim",
+      "stim_+6_-11": "stim",
+      "stim_+7_-20": "stim",
+      "stim_+18_-11": "stim",
+      "stim_+11_-10": "stim",
+      "stim_+10_-16": "stim",
+      "stim_+19_-19": "stim",
+      "stim_+15_-16": "stim",
+      "stim_+13_-18": "stim",
+      "stim_+8_-19": "stim",
+      "stim_+16_-15": "stim",
+      "stim_+15_-19": "stim",
+      "stim_+10_-11": "stim",
+      "stim_+6_-18": "stim",
+      "stim_+18_-9": "stim",
+      "stim_+14_-16": "stim",
+      "stim_+18_-19": "stim",
+      "stim_+9_-13": "stim",
+      "stim_+10_-20": "stim",
+      "stim_+16_-12": "stim",
+      "stim_+18_-10": "stim",
+      "stim_+7_-19": "stim",
+      "stim_+8_-16": "stim",
+      "stim_+10_-6": "stim",
+      "stim_+7_-14": "stim",
+      "stim_+15_-17": "stim",
+      "stim_+17_-14": "stim",
+      "stim_+15_-12": "stim",
+      "stim_+15_-13": "stim",
+      "stim_+17_-5": "stim",
+      "stim_+19_-7": "stim",
+      "stim_+12_-7": "stim",
+      "stim_+16_-11": "stim",
+      "stim_+16_-20": "stim",
+      "stim_+20_-14": "stim",
+      "stim_+7_-8": "stim",
+      "stim_+12_-14": "stim",
+      "stim_+15_-8": "stim",
+      "stim_+9_-10": "stim",
+      "stim_+6_-16": "stim",
+      "stim_+8_-12": "stim",
+      "stim_+10_-15": "stim",
+      "stim_+13_-7": "stim",
+      "stim_+18_-17": "stim",
+      "stim_+18_-14": "stim",
+      "stim_+11_-18": "stim",
+      "stim_+5_-15": "stim",
+      "stim_+14_-8": "stim",
+      "stim_+5_-9": "stim",
+      "stim_+17_-6": "stim",
+      "stim_+11_-8": "stim",
+      "stim_+12_-18": "stim",
+      "stim_+16_-9": "stim",
+      "stim_+16_-8": "stim",
+      "stim_+20_-10": "stim",
+      "stim_+11_-7": "stim",
+      "stim_+6_-6": "stim",
+      "stim_+13_-12": "stim",
+      "stim_+15_-14": "stim",
+      "stim_+8_-10": "stim",
+      "stim_+13_-13": "stim",
+      "stim_+17_-13": "stim",
+      "stim_+14_-13": "stim",
+      "stim_+6_-19": "stim",
+      "stim_+17_-18": "stim",
+      "stim_+20_-13": "stim",
+      "stim_+20_-16": "stim",
+      "stim_+15_-20": "stim",
+      "stim_+13_-17": "stim",
+      "stim_+14_-14": "stim",
+      "stim_+20_-17": "stim",
+      "stim_+5_-6": "stim",
+      "stim_+9_-9": "stim",
+      "stim_+9_-18": "stim",
+      "stim_+10_-5": "stim",
+      "stim_+17_-10": "stim",
+      "stim_+19_-5": "stim",
+      "stim_+6_-12": "stim",
+      "stim_+10_-12": "stim",
+      "stim_+8_-15": "stim",
+      "stim_+20_-6": "stim",
+      "stim_+7_-17": "stim",
+      "stim_+13_-19": "stim",
+      "stim_+12_-13": "stim",
+      "stim_+12_-19": "stim",
+      "stim_+16_-5": "stim",
+      "stim_+20_-7": "stim",
+      "stim_+11_-9": "stim",
+      "stim_+5_-10": "stim",
+      "stim_+7_-13": "stim",
+      "stim_+19_-14": "stim",
+      "stim_+17_-9": "stim",
+      "stim_+19_-11": "stim",
+      "stim_+5_-13": "stim",
+      "stim_+16_-6": "stim",
+      "stim_+13_-10": "stim",
+      "stim_+13_-9": "stim",
+      "stim_+9_-5": "stim",
+      "stim_+9_-8": "stim",
+      "stim_+9_-7": "stim",
+      "stim_+17_-7": "stim",
+      "stim_+5_-16": "stim",
+      "stim_+17_-17": "stim",
+      "stim_+5_-12": "stim",
+      "stim_+13_-20": "stim",
+      "stim_+9_-15": "stim",
+      "stim_+9_-20": "stim",
+      "stim_+13_-6": "stim",
+      "stim_+15_-5": "stim",
+      "stim_+12_-15": "stim",
+      "stim_+7_-18": "stim",
+      "stim_+7_-7": "stim",
+      "stim_+20_-20": "stim",
+      "stim_+8_-20": "stim",
+      "stim_+9_-11": "stim",
+      "stim_+8_-8": "stim",
+      "stim_+15_-10": "stim",
+      "stim_+6_-5": "stim",
+      "stim_+12_-17": "stim",
+      "stim_+10_-14": "stim",
+      "stim_+20_-11": "stim"
+    },
+    "condition_ignore": [
+      "fix",
       "strongly_reject",
+      "weakly_reject",
       "weakly_accept",
-      "weakly_reject"
+      "strongly_accept"
     ]
   },
   "FaceBody": {
+    "keep": true,
     "condition": [
       "bodies_body",
       "bodies_limb",
@@ -665,9 +1328,24 @@
       "objects_instrument",
       "places_corridor",
       "places_house"
-    ]
+    ],
+    "condition_grouper": {
+      "Faces_adult": "faces_adult",
+      "Bodies_body": "bodies_body",
+      "Characters_word": "characters_word",
+      "Objects_car": "objects_car",
+      "Places_house": "places_house",
+      "Places_corridor": "places_corridor",
+      "Bodies_limb": "bodies_limb",
+      "Characters_number": "characters_number",
+      "Faces_child": "faces_child",
+      "Objects_instrument": "objects_instrument"
+
+    },
+    "condition_ignore": ["Baseline"]
   },
   "Scene": {
+    "keep": true,
     "condition": [
       "dot_easy_left",
       "dot_easy_right",
@@ -677,204 +1355,112 @@
       "scene_impossible_incorrect",
       "scene_possible_correct",
       "scene_possible_incorrect"
-    ]
+    ],
+    "condition_grouper": {
+      "dot_easy_left_correct": "dot_easy_left",
+      "dot_easy_left_incorrect": "dot_easy_left",
+      "dot_easy_right_correct": "dot_easy_right",
+      "dot_easy_right_incorrect": "dot_easy_right",
+      "dot_hard_left_correct": "dot_hard_left",
+      "dot_hard_left_incorrect": "dot_hard_left",
+      "dot_hard_right_correct": "dot_hard_right",
+      "dot_hard_right_incorrect": "dot_hard_right"
+    },
+    "condition_ignore": ["fix", "iti"]
   },
   "BreathHolding": {
-    "condition": ["breathe", "get_ready", "hold_breath"]
+    "keep": true,
+    "condition": ["breathe", "get_ready", "hold_breath"],
+    "condition_grouper": {},
+    "condition_ignore": ["fixation"]
   },
   "Checkerboard": {
-    "condition": ["checkerboard", "fixation"]
+    "keep": true,
+    "condition": ["checkerboard"],
+    "condition_grouper": {},
+    "condition_ignore": ["fixation"]
   },
   "FingerTap": {
-    "condition": ["fingertap", "rest"]
+    "keep": true,
+    "condition": ["fingertap", "rest"],
+    "condition_grouper": {},
+    "condition_ignore": ["fixation"]
   },
   "ItemRecognition": {
+    "keep": true,
     "condition": [
       "arrow_left",
       "arrow_right",
       "encode1",
       "encode3",
       "encode5",
-      "load1_instr",
-      "load3_instr",
-      "load5_instr",
-      "probe1_mem",
-      "probe1_new",
-      "probe3_mem",
-      "probe3_new",
-      "probe5_mem",
-      "probe5_new"
-    ]
+      "probe1",
+      "probe3",
+      "probe5"
+    ],
+    "condition_grouper": {
+      "probe1_mem": "probe1",
+      "probe1_new": "probe1",
+      "probe3_mem": "probe3",
+      "probe3_new": "probe3",
+      "probe5_mem": "probe5",
+      "probe5_new": "probe5"
+    },
+    "condition_ignore": ["fixation", "fix", "load1_instr", "load3_instr", "load5_instr"]
   },
   "VisualSearch": {
+    "keep": true,
     "condition": [
       "delay_vis",
       "delay_wm",
       "memory_array_four",
       "memory_array_two",
-      "probe_item_absent",
       "probe_item_four",
-      "probe_item_present",
       "probe_item_two",
       "response_hit",
       "response_miss",
       "sample_item",
-      "search_array_absent",
       "search_array_four",
-      "search_array_present",
       "search_array_two"
-    ]
+    ],
+    "condition_grouper": {
+      "search_array_two_present": "search_array_two",
+      "probe_item_four_present": "probe_item_four",
+      "probe_item_two_absent": "probe_item_two",
+      "probe_item_four_absent": "probe_item_four",
+      "search_array_four_absent": "search_array_four",
+      "search_array_four_present": "search_array_four",
+      "search_array_two_absent": "search_array_two",
+      "probe_item_two_present": "probe_item_two"
+    },
+    "condition_ignore": ["trial_onset", "no_response"]
   },
   "Color": {
-    "condition": ["achromatic", "chromatic", "response"]
+    "keep": true,
+    "condition": ["achromatic", "chromatic"],
+    "condition_grouper": {},
+    "condition_ignore": ["fix", "1-back", "y"]
   },
   "Motion": {
+    "keep": true,
     "condition": [
-      "anti",
-      "clock",
-      "coherent",
-      "incoherent",
-      "left",
-      "right",
-      "stationary"
-    ]
-  },
-  "OptimismBias": {
-    "condition": [
-      "future_negative",
-      "future_neutral",
-      "future_positive",
-      "inconclusive",
-      "past_negative",
-      "past_neutral",
-      "past_positive"
-    ]
-  },
-  "HarririAomic": {
-    "condition": ["emotion", "index_response", "middle_response", "shape"]
-  },
-  "FacesAomic": {
-    "condition": [
-      "anger",
-      "contempt",
-      "european",
-      "female",
-      "joy",
-      "male",
-      "mediterranean",
-      "neutral",
-      "pride"
-    ]
-  },
-  "StroopAomic": {
-    "condition": [
-      "congruent",
-      "face_female",
-      "face_male",
-      "incongruent",
-      "word_female",
-      "word_male"
-    ]
-  },
-  "WMAomic": {
-    "condition": ["active_change", "active_no_change", "passive"]
-  },
-  "LocalizerAbstraction": {
-    "condition": [
-      "localizer_checkerboards",
-      "localizer_faces",
-      "localizer_humanbody",
-      "localizer_nonsensewords",
-      "localizer_numbers",
-      "localizer_objects",
-      "localizer_places",
-      "localizer_words",
-      "response"
-    ]
-  },
-  "Abstraction": {
-    "condition": [
-      "animals_edge",
-      "animals_geometry",
-      "animals_photo",
-      "faces_edge",
-      "faces_geometry",
-      "faces_photo",
-      "flora_edge",
-      "flora_geometry",
-      "flora_photo",
-      "humanbody_edge",
-      "humanbody_geometry",
-      "humanbody_photo",
-      "objects_edge",
-      "objects_geometry",
-      "objects_photo",
-      "places_edge",
-      "places_geometry",
-      "places_photo",
-      "response"
-    ]
-  },
-  "MDTB": {
-    "condition": [
-      "2back_easy",
-      "2back_hard",
-      "action_action",
-      "action_control",
-      "finger_complex",
-      "finger_simple",
-      "flexion_extension",
-      "movie",
-      "search_easy",
-      "search_hard",
-      "semantic_easy",
-      "semantic_hard",
-      "tom_belief",
-      "tom_photo"
-    ]
-  },
-  "Emotion": {
-    "condition": ["negative_image", "neutral_image", "valence_scale"]
-  },
-  "MultiModal": {
-    "condition": [
-      "audio_animal",
-      "audio_monkey",
-      "audio_nature",
-      "audio_silence",
-      "audio_speech",
-      "audio_tools",
-      "audio_voice",
-      "image_animals",
-      "image_birds",
-      "image_fruits",
-      "image_human_body",
-      "image_human_face",
-      "image_human_object",
-      "image_monkey_body",
-      "image_monkey_face",
-      "image_monkey_object",
-      "image_sculpture",
-      "tactile_bottom",
-      "tactile_middle",
-      "tactile_novalve",
-      "tactile_top"
-    ]
-  },
-  "Mario": {
-    "condition": [
-      "action_jump",
-      "action_leftrun",
-      "action_leftwalk",
-      "action_rightrun",
-      "action_rightwalk",
-      "loss_dying",
-      "onscreen_enemy",
-      "reward_coin",
-      "reward_enemykill_impact",
-      "reward_enemykill_kick",
-      "reward_enemykill_stomp",
-      "reward_powerup_taken"
-    ]
+      "both_stationary",
+      "both_incoherent",
+      "both_coherent",
+      "left_stationary",
+      "left_coherent",
+      "left_incoherent",
+      "right_stationary",
+      "right_incoherent",
+      "right_coherent"
+    ],
+    "condition_grouper": {
+      "both_coherent_anti": "both_coherent",
+      "both_coherent_clock": "both_coherent",
+      "left_coherent_anti": "left_coherent",
+      "left_coherent_clock": "left_coherent",
+      "right_coherent_clock": "right_coherent",
+      "right_coherent_anti": "right_coherent"
+    },
+    "condition_ignore": ["iti_fix", "response"]
   }
-}
