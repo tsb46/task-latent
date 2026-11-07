@@ -83,6 +83,8 @@ class Dataset:
     scan_metadata: list[ScanMetadata]
     # task to list index
     task_index: dict[str, list[int]]
+    # conditions metadata
+    task_conditions: dict[str, list[str]]
     # load parameters
     subject: str
     normalize: bool
@@ -326,6 +328,9 @@ class DataLoader:
                     # append scan index to task_index dict
                     task_index[task].append(scan_indx)
 
+                    # increment scan index for next run
+                    scan_indx += 1
+
         if verbose:
             print(f"Data loading complete for subject '{self.subject}'")
 
@@ -336,6 +341,11 @@ class DataLoader:
             task_index=task_index,
             subject=self.subject,
             normalize=normalize,
+            task_conditions={
+                task: self.condition_metadata[task]["condition"]
+                for task in tasks
+                if self.condition_metadata.get(task, {}).get("keep", False)
+            },
         )
 
     def events_to_df(
@@ -423,8 +433,10 @@ class DataLoader:
         ----------
         fp : str
             NIfTI file path.
-        mask_img : nib.nifti1.Nifti1Image
-            Brain mask in the same space as fp.
+        normalize : bool, optional
+            Whether to z-score the fMRI data across time, by default False.
+        verbose : bool, optional
+            Whether to print warnings during loading, by default True.
 
         Returns
         ---------
