@@ -2,7 +2,6 @@
 Spline basis for modeling task-evoked hemodynamic response functions.
 """
 
-import warnings
 from typing import Literal
 
 import matplotlib as mpl
@@ -10,9 +9,9 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from formulaic import model_matrix
-from nilearn.glm.first_level import make_first_level_design_matrix
 from scipy.interpolate import interp1d
 from scipy.linalg import null_space
+from scipy.signal import fftconvolve
 
 
 class HRFBasis:
@@ -58,7 +57,7 @@ class HRFBasis:
         self,
         duration_sec: float,
         zero_at_onset: bool = True,
-        knots_per_sec: float = 0.2,
+        knots_per_sec: float = 0.5,
         knot_spacing: Literal["uniform", "geometric"] = "uniform",
         geometric_alpha: float = 2.0,
         basis_type: Literal["bs", "cr"] = "cr",
@@ -307,8 +306,8 @@ def convolve_event_with_basis(
     basis: HRFBasis,
     per_condition_normalization: bool = True,
     per_task_normalization: bool = False,
-    fill_value=0.0,
     slicetime_ref: float = 0.0,
+    cols_to_keep: list[str] | None = None,
 ) -> tuple[np.ndarray, list[str]]:
     """
     Convolve a stimulus time course with an HRF basis. Takes a BIDS-formatted
@@ -337,14 +336,12 @@ def convolve_event_with_basis(
         Whether to normalize (frobenius norm) the convolved regressors within each the task. This can be applied to ensure
         that the model is not biased toward tasks with more conditions. Default is False.
 
-    fill_value : float, default=0.0
-        Value used to fill samples before the start of the time series.
-
     slicetime_ref : float, default=0.0
-        Reference time for slice timing correction. This is used to adjust the onset times of events
-        to account for the fact that different slices in an fMRI volume are acquired at different times
-        within a TR. The value should be between 0 and 1, where 0 corresponds to the first slice and 1 corresponds to the last slice.
-        The default value of 0 corresponds to the first slice.
+        Fraction of a TR (0 to 1) at which each volume is considered sampled; frame i is
+        placed at (i + slicetime_ref) * tr seconds. Use 0.5 for data slice-time corrected to
+        the middle of the TR (fMRIPrep default).
+    cols_to_keep : list[str] or None, default=None
+        List of columns to keep from the event dataframe. If None, all columns are kept.
 
     Returns
     -------
@@ -354,33 +351,51 @@ def convolve_event_with_basis(
     # enure basis is created
     if not hasattr(basis, "basis"):
         raise RuntimeError("Call basis.create() before convolve_event_with_basis().")
-    # get time samples of functional scan based on slicetime reference
-    frametimes = np.linspace(
-        slicetime_ref, (n_frames - 1 + slicetime_ref) * tr, n_frames
-    )
-    # create boxcar stimulus time course from event information
-    # ignore warning about unexpected columns in event_df
-    with warnings.catch_warnings():
-        warnings.simplefilter("ignore")
-        boxcar_matrix = make_first_level_design_matrix(
-            frametimes,
-            events=event_df,
-            hrf_model=None,
-            drift_model=None,
-            high_pass=None,
-        )
-    # nilearn inserts a column for the constant term, which we don't need
-    if "constant" in boxcar_matrix.columns:
-        boxcar_matrix = boxcar_matrix.drop(columns=["constant"])
+    available = sorted(event_df["trial_type"].unique().tolist())
+    if cols_to_keep is None:
+        trial_names = available
+    else:
+        missing = [c for c in cols_to_keep if c not in available]
+        if missing:
+            raise KeyError(
+                f"Conditions {missing} not present in event_df. "
+                f"Available conditions: {available}."
+            )
+        trial_names = list(cols_to_keep)
+
+    # Frame i is sampled at (i + slicetime_ref) * tr seconds.
+    frametimes = (np.arange(n_frames) + slicetime_ref) * tr
+    dt = basis.dt
+    frame_idx = np.rint(frametimes / dt).astype(int)
+    n_hr = frame_idx[-1] + 1
 
     # loop through each trial type and convolve with basis
     convolved_list = []
     labels_list = []
-    trial_names = boxcar_matrix.columns.tolist()
     for trial_type in trial_names:
-        boxcar = boxcar_matrix[trial_type].values
-        # project boxcar onto basis functions
-        convolved = basis.project(boxcar, tr=tr, fill_value=fill_value)
+        cond_events = event_df[event_df["trial_type"] == trial_type]
+        # Build the stimulus at the basis resolution so events shorter than a TR
+        # (or off the TR grid) are not lost to aliasing.
+        onset_idx = np.rint(cond_events["onset"].to_numpy() / dt).astype(int)
+        offset_idx = np.rint(
+            (cond_events["onset"] + cond_events["duration"]).to_numpy() / dt
+        ).astype(int)
+        # impulse events get a one-sample width
+        offset_idx = np.maximum(offset_idx, onset_idx + 1)
+        steps = np.zeros(n_hr + 1)
+        np.add.at(steps, np.clip(onset_idx, 0, n_hr), 1.0)
+        np.add.at(steps, np.clip(offset_idx, 0, n_hr), -1.0)
+        boxcar_hr = np.cumsum(steps)[:n_hr]
+
+        convolved = (
+            np.column_stack(
+                [
+                    fftconvolve(boxcar_hr, basis.basis[:, k])[:n_hr]
+                    for k in range(basis.basis.shape[1])
+                ]
+            )[frame_idx]
+            * dt
+        )
         # if per_condition_normalization, normalize convolved regressors for each condition separately
         if per_condition_normalization:
             convolved /= np.linalg.norm(convolved, ord="fro")
