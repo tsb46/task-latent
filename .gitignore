@@ -15,6 +15,7 @@ env/
 
 # scratch directory and python script
 scratch.py
+scratch.ipynb
 scratch/
 
 # ignore data directory

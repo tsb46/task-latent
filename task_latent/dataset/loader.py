@@ -16,6 +16,7 @@ from scipy.stats import zscore
 
 from task_latent.constants import MASK
 from task_latent.io.file import FileMapper
+from task_latent.tagging.annotations import FeatureMapping
 
 
 @dataclass(frozen=True)
@@ -120,9 +121,9 @@ class DataLoader:
 
     Methods
     -------
-    load(task: list[str] | None = None, normalize: bool = True, verbose: bool = True) -> Dataset
+    load(task: list[str] | None = None, normalize: bool = True, annotation_mapping: FeatureMapping | None = None, verbose: bool = True) -> Dataset
         Load the preprocessed dataset files for the subject, returning a Dataset object.
-    events_to_df(fp_event: str, ped: str, session: str, drop_time: float | None = None, condition_grouper: dict | None = None, condition_ignore: list[str] | None = None) -> pd.DataFrame
+    events_to_df(fp_event: str, ped: str, session: str, drop_time: float | None = None, condition_grouper: dict | None = None, condition_ignore: list[str] | None = None, annotation_mapping: FeatureMapping | None = None) -> pd.DataFrame
         Load bids-formatted event file to a pandas DataFrame
     load_fmri(fp: str, normalize: bool = False, convert_to_2d: bool = True, verbose: bool = True) -> np.ndarray
         Load the preprocessed fMRI data from a NIfTI file.
@@ -158,7 +159,7 @@ class DataLoader:
         self.sessions = self.file_mapper.sessions
         # load condition metadata for tasks from JSON file
         # Conditions for IBC tasks
-        with open("task_latent/dataset/ibc_conditions.json", "r") as f:
+        with open("task_latent/ibc_conditions.json", "r") as f:
             try:
                 # load JSON and convert nulls to NaN for consistency
                 self.condition_metadata = json.load(f, object_hook=convert_none_to_nan)
@@ -172,6 +173,7 @@ class DataLoader:
         self,
         tasks: list[str] | None = None,
         normalize: bool = True,
+        annotation_mapping: FeatureMapping | None = None,
         verbose: bool = True,
     ) -> Dataset:
         """
@@ -183,6 +185,8 @@ class DataLoader:
             The task identifier(s) to load. If None, all tasks will be loaded. Default is None
         normalize : bool, optional
             Whether to normalize (z-score) the fMRI data along the time dimension. Default is True.
+        annotation_mapping : FeatureMapping | None, optional
+            Mapping of annotations to features. Default is None.
         verbose : bool, optional
             Whether to print progress messages. Default is True.
         """
@@ -232,7 +236,7 @@ class DataLoader:
                 raise ValueError(
                     f"No condition metadata found for task '{task}' in IBC conditions JSON file."
                 )
-            conditions = condition_metadata.get("condition", [])
+            conditions: list[str] = condition_metadata.get("condition", [])
             # get grouping of conditions, if any
             condition_grouper = condition_metadata.get("condition_grouper", None)
             if condition_grouper is None:
@@ -302,7 +306,7 @@ class DataLoader:
                             f"and run {run}."
                         )
                     # convert event file to dataframe
-                    event_df = self.events_to_df(
+                    event_df, _conditions = self.events_to_df(
                         fp_event=event_file[0],
                         task=task,
                         ped=ped,
@@ -310,13 +314,14 @@ class DataLoader:
                         conditions=conditions,
                         condition_grouper=condition_grouper,
                         condition_ignore=condition_ignore,
+                        annotation_mapping=annotation_mapping,
                     )
                     events.append(event_df)
 
                     # create scan metadata object
                     metadata = ScanMetadata(
                         label=task,
-                        conditions=conditions,
+                        conditions=_conditions,
                         ped=ped,
                         tr=tr,
                         n_frames=fmri_data.shape[0],
@@ -357,7 +362,8 @@ class DataLoader:
         conditions: list[str],
         condition_grouper: dict | None = None,
         condition_ignore: list[str] | None = None,
-    ) -> pd.DataFrame:
+        annotation_mapping: FeatureMapping | None = None,
+    ) -> tuple[pd.DataFrame, list[str]]:
         """
         Load BIDS-formatted event files as a pandas DataFrame.
 
@@ -379,11 +385,15 @@ class DataLoader:
         condition_ignore : List[str], optional
             A list of condition names to ignore. If provided, events with these condition names
             will be removed from the DataFrame. Default is None.
+        annotation_mapping : FeatureMapping | None, optional
+            Mapping of annotations to features. Default is None.
 
         Returns
         -------
         pd.DataFrame
             The event data as a pandas DataFrame.
+        list[str]
+            The list of conditions present in the event data.
         """
         event_df = pd.read_csv(fp_event, delimiter="\t")
         event_df = event_df.sort_values(by="onset")
@@ -401,7 +411,7 @@ class DataLoader:
                 ~event_df["trial_type"].isin(condition_ignore)
             ].reset_index(drop=True)
 
-        # ensure there are no conditions in the event dataframe missing in conditions list
+        # # ensure there are no conditions in the event dataframe missing in conditions list
         ev_conditions = event_df["trial_type"].unique()
         for cond in ev_conditions:
             if cond not in conditions:
@@ -409,15 +419,40 @@ class DataLoader:
                     f"The event dataframe for task {task} contains a condition "
                     f"not specified in `ibc_conditions.json`: {cond}"
                 )
-        # ensure that all conditions in the conditions list are present in the event dataframe
-        for cond in conditions:
-            if cond not in ev_conditions:
-                raise ValueError(
-                    f"The event dataframe for task {task} is missing a condition "
-                    f"specified in `ibc_conditions.json`: {cond}"
-                )
+        # # ensure that all conditions in the conditions list are present in the event dataframe
+        # for cond in conditions:
+        #     if cond not in ev_conditions:
+        #         raise ValueError(
+        #             f"The event dataframe for task {task} is missing a condition "
+        #             f"specified in `ibc_conditions.json`: {cond}"
+        #         )
 
-        return event_df
+        if annotation_mapping is not None:
+            cond_to_annotations = {}
+            for cond in ev_conditions:
+                cond_annotations = annotation_mapping.get((task, cond))
+                if cond_annotations is None:
+                    raise ValueError(
+                        f"The event dataframe for task {task} contains a condition "
+                        f"not specified in the annotation mapping: {cond}"
+                    )
+                # flatten the annotation mapping for this condition
+                cond_anno_flat = [
+                    "-".join([pair[1] for pair in anno_pairs])
+                    for anno_pairs in cond_annotations
+                ]
+                cond_to_annotations[cond] = cond_anno_flat
+            event_df["annotations"] = event_df["trial_type"].map(cond_to_annotations)
+            # drop the original trial_type column
+            event_df = event_df.drop(columns=["trial_type"])
+            # rename annotations column to trial_type
+            event_df = event_df.rename(columns={"annotations": "trial_type"})
+            # explode the trial_type column to have one row per annotation
+            event_df = event_df.explode("trial_type")
+            # get new list of conditions after exploding
+            conditions = event_df["trial_type"].unique().tolist()
+
+        return event_df, conditions
 
     def load_fmri(
         self,
